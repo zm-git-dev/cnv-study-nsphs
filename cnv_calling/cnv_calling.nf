@@ -39,6 +39,22 @@ process partition {
     template 'partition.sh'
 }
 
+process call {
+  cpus 1
+  time '1:00:00'
+  input:
+    path root
+    val bin_size
+  output:
+    path 'variants.txt'
+  shell:
+    template 'calling.sh'
+}
+
+process quality_control {
+  
+}
+
 workflow {
   bams = Channel.fromPath(params.bams)
   extract_reads(bams)
