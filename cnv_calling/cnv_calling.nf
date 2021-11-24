@@ -6,18 +6,18 @@ params.bams="/proj/sens2016007/nobackup/bam-files/*.bam"
 
 process extract_reads {
   cpus 2
-  time '1:00:00'
+  time '1h'
   input:
     path bam
   output:
-    path 'root'
+    path '*.root'
   shell:
     template 'extract_reads.sh'
 }
 
 process calculate_bins {
   cpus 1
-  time '20:00'
+  time '20m'
   input:
     path root
     path reference
@@ -29,7 +29,7 @@ process calculate_bins {
 
 process partition {
   cpus 2
-  time '40:00'
+  time '40m'
   input:
     path root
     val bin_size
@@ -41,18 +41,28 @@ process partition {
 
 process call {
   cpus 1
-  time '1:00:00'
+  time '1h'
+  publishDir "cnv_calls", mode: 'symlink'
   input:
     path root
     val bin_size
   output:
-    path 'variants.txt'
+    path '*_variants.txt'
   shell:
     template 'calling.sh'
 }
 
 process quality_control {
-  
+  cpus 1
+  time '10m'
+  publishDir "cnv_calls", mode: 'symlink'
+  conda 'r-data.table r-tidyverse'
+  input:
+    path variants
+  output
+    path '*_variants_qc.bed'
+  shell:
+    template 'qc.R'
 }
 
 workflow {
