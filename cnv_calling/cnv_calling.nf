@@ -19,17 +19,24 @@ process calculate_bins {
   cpus 1
   time '20:00'
   input:
-	path root
-	path reference
+    path root
+    path reference
   output:
-	stdout
+    stdout
   shell:
     template 'calculate_bins.sh'
 }
 
 process partition {
-	cpus 1
-	
+  cpus 2
+  time '40:00'
+  input:
+    path root
+    val bin_size
+  output:
+    path "${root}"
+  shell:
+    template 'partition.sh'
 }
 
 workflow {
