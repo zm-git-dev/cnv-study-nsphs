@@ -9,7 +9,7 @@ max_ratio=5
 best_size='-1'
 for bin_size in bin_sizes
 do
-  cnvnator -root "!{root}" -his "$bin_size" -chrom $chrom -d "!{referece}"
+  cnvnator -root "!{root}" -his "$bin_size" -chrom $chrom -d "!{reference}"
   # CNVnator outputs a log message from which we have to extract the mean RD and its SD.
   bin_stats=($(cnvnator -root "!{root}" -stat "$bin_size" -chrom $chrom | perl -ne 'print "$1\t$2\n" if /^Average RD per bin \(1-22\) is (\d+\.\d+) \+- (\d+\.\d+) \(after GC correction\)/'))
   let "ratio=${bin_stats[1]}/${bin_stats[2]}"
