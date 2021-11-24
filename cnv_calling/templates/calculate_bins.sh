@@ -7,7 +7,7 @@ chrom=$(seq 1 22)
 
 max_ratio=5
 best_size='-1'
-for bin_size in bin_sizes
+for bin_size in $bin_sizes
 do
   cnvnator -root "!{root}" -his "$bin_size" -chrom $chrom -d "!{reference}"
   # CNVnator outputs a log message from which we have to extract the mean RD and its SD.
