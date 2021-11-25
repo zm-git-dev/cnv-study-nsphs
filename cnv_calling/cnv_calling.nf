@@ -69,5 +69,7 @@ workflow {
   bams = Channel.fromPath(params.bams)
   extract_reads(bams)
   calculate_bins(extract_reads.out, params.reference)
-  calculate_bins.out.view()
+  partition(extract_reads.out, calculate_bins.out)
+  call(partition.root, calculate_bins.out)
+  quality_control(call.out)
 }
