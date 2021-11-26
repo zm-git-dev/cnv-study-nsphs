@@ -39,7 +39,7 @@ process partition {
     template 'partition.sh'
 }
 
-process call {
+process call_variants {
   cpus 1
   time '1h'
   publishDir "cnv_calls", mode: 'symlink'
@@ -59,10 +59,12 @@ process quality_control {
   conda 'r-data.table r-tidyverse'
   input:
     path variants
-  output
+  output:
     path '*_variants_qc.bed'
-  shell:
-    template 'qc.R'
+  script:
+    """
+    Rscript scripts/qc.R $variants
+    """
 }
 
 workflow {
@@ -70,6 +72,6 @@ workflow {
   extract_reads(bams)
   calculate_bins(extract_reads.out, params.reference)
   partition(extract_reads.out, calculate_bins.out)
-  call(partition.out, calculate_bins.out)
-  quality_control(call.out)
+  call_variants(partition.out, calculate_bins.out)
+  quality_control(call_variants.out)
 }

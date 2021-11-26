@@ -3,7 +3,10 @@ library(data.table)
 library(stringr)
 library(magrittr)
 
-variants <- fread($variants)
+args <- commandArgs(TRUE)
+variant_file <- args[1]
+
+variants <- fread(variant_file)
 names(variants) <- c("type", "coordinates", "size", "rd_norm", "e1", "e2", "e3". "e4", "q0")
 passing_qc <- variants[q0 >= 0][q0 <= 0.5][size >= 1000][e1 <= 0.00005]
 coordinates <- str_split_fixed(passing_qc$coordinates, ":|-", n=3) %>% as.data.table()
