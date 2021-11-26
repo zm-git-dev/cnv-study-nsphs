@@ -17,7 +17,7 @@ awk '
     max_ratio=5;
     best_size=-1;
   }
-  }
+  {
     ratio = $1 / $2;
     if (ratio >= 4 && ratio <= max_ratio) {
       best_size=$3;
