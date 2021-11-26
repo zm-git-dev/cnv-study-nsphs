@@ -5,7 +5,7 @@ module load ROOT/6.06.08 bioinfo-tools CNVnator
 bin_sizes=(70 85 100 150 200 250)
 chrom=$(seq 1 22)
 
-for bin_size in $bin_sizes
+for bin_size in "${bin_sizes[@]}"
 do
   cnvnator -root "!{root}" -his "$bin_size" -chrom $chrom -d "!{reference}" > &2
   # CNVnator outputs a log message from which we have to extract the mean RD and its SD.
