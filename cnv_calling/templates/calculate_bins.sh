@@ -24,4 +24,4 @@ awk '
       max_ratio=ratio;
     }
   }
-  END {print best_size}' stats.txt
+  END {printf "%d", best_size}' stats.txt
