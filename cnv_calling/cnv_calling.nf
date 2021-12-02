@@ -55,7 +55,7 @@ process call_variants {
 process quality_control {
   cpus 1
   time '30m'
-  publishDir "cnv_calls", mode: 'symlink'
+  publishDir "cnv_calls/qc", mode: 'symlink'
   beforeScript 'ml R_packages'
 
   input:
@@ -69,7 +69,7 @@ process quality_control {
 process cnvnator {
   cpus 4
   time '4h'
-  publishDir "cnv_calls", mode: 'symlink'
+  publishDir "cnv_calls/raw", mode: 'symlink'
   stageInMode 'copy'
   
   input:
