@@ -15,43 +15,6 @@ process extract_reads {
     template 'extract_reads.sh'
 }
 
-process calculate_bins {
-  cpus 1
-  time '20m'
-  input:
-    path root
-    path reference
-  output:
-    stdout
-  shell:
-    template 'calculate_bins.sh'
-}
-
-process partition {
-  cpus 2
-  time '40m'
-  input:
-    path root
-    val bin_size
-  output:
-    path "${root}"
-  shell:
-    template 'partition.sh'
-}
-
-process call_variants {
-  cpus 1
-  time '1h'
-  publishDir "cnv_calls", mode: 'symlink'
-  input:
-    path root
-    val bin_size
-  output:
-    path '*_variants.txt'
-  shell:
-    template 'calling.sh'
-}
-
 process quality_control {
   cpus 1
   time '30m'
@@ -81,9 +44,20 @@ process cnvnator {
     template 'cnvnator.sh'
 }
 
+workflow call_cnvs {
+  take:
+    bams
+    reference
+  main:
+    extract_reads(bams)
+    cnvnator(extract_reads.out, reference)
+    quality_control(cnvnator.out)
+  emit:
+    raw_variants = cnvnator.out
+    qc_variants = quality_control.out
+}
+
 workflow {
   bams = Channel.fromPath(params.bams)
-  extract_reads(bams)
-  cnvnator(extract_reads.out, params.reference)
-  quality_control(cnvnator.out)
+  call_cnvs(bams, params.reference)
 }
