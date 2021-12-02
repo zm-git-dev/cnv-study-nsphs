@@ -5,8 +5,8 @@ params.reference='/proj/sens2016007/nobackup/Reference'
 params.bams="/proj/sens2016007/nobackup/bam-files/*.bam"
 
 process extract_reads {
-  cpus 2
-  time '1h'
+  cpus 4
+  time '2h'
   input:
     path bam
   output:
@@ -54,24 +54,36 @@ process call_variants {
 
 process quality_control {
   cpus 1
-  time '10m'
+  time '30m'
   publishDir "cnv_calls", mode: 'symlink'
-  conda 'r-data.table r-tidyverse'
+  beforeScript 'ml R_packages'
+
   input:
     path variants
   output:
     path '*_variants_qc.bed'
-  script:
-    """
-    Rscript scripts/qc.R $variants
-    """
+  shell:
+    template 'qc.R'
+}
+
+process cnvnator {
+  cpus 4
+  time '4h'
+  publishDir "cnv_calls", mode: 'symlink'
+  stageInMode 'copy'
+  
+  input:
+    path root
+    path reference
+  output:
+    path '*_variants.txt'
+  shell:
+    template 'cnvnator.sh'
 }
 
 workflow {
   bams = Channel.fromPath(params.bams)
   extract_reads(bams)
-  calculate_bins(extract_reads.out, params.reference)
-  partition(extract_reads.out, calculate_bins.out)
-  call_variants(partition.out, calculate_bins.out)
-  quality_control(call_variants.out)
+  cnvnator(extract_reads.out, params.reference)
+  quality_control(cnvnator.out)
 }
