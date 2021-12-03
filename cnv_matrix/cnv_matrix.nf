@@ -39,6 +39,17 @@ process align_cnvs {
     template 'align_cnvs.bed'
 }
 
+process assemble_matrix {
+  cpus 4
+  time '1h'
+
+  input:
+    path bed_files
+  output:
+    'cnv_matrix.txt'
+  shell:
+    template: 'assemble_matrix.R'
+}
 
 workflow create_matrix {
   take:
