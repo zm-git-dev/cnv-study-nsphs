@@ -28,13 +28,14 @@ process make_windows {
 process align_cnvs {
   cpus 2
   time '1h'
+  publishDir "cnv_calls/aligned", mode: 'symlink'
 
   input:
     path variants
     path windows
     val sample_size
   output:
-    path '*_200bp.bed', emit 'cnv_calls/aligned'
+    path '*_200bp.bed'
   shell:
     template 'align_cnvs.bed'
 }
@@ -42,13 +43,27 @@ process align_cnvs {
 process assemble_matrix {
   cpus 4
   time '1h'
+  publishDir "cnv_calls/matrix", mode: 'symlink'
 
   input:
     path bed_files
   output:
-    'cnv_matrix.txt', emit 'cnv_calls/matrix'
+    path 'cnv_matrix.txt'
   shell:
     template: 'assemble_matrix.R'
+}
+
+process collapse_matrix {
+  cpus 4
+  time '1h'
+  publishDir "cnv_calls/matrix", mode: 'symlink'
+
+  input:
+    path cnv_matrix
+  output:
+    path 'cnv_matrix_collapsed.txt'
+  shell:
+    template 'collapse_matrix.sh'
 }
 
 workflow create_matrix {
@@ -61,14 +76,18 @@ workflow create_matrix {
     num_samples = filtered_cnvs.size()
     make_windows(filtered_cnvs)
     align_cnvs(qc_variants, make_windows.out, num_samples)
+    assemble_matrix(align_cnvs.out)
+    collapse_matrix(assemble_matrix.out)
   emit:
-    align_cnvs.out
+    collapse_matrix.out
 }
 
 params.raw_variants="/proj/sens2016007/nobackup/disentanglement/cnv_calls/raw/*"
 params.qc_variants="/proj/sens2016007/nobackup/disentanglement/cnv_calls/qc/*"
 
 workflow {
-  create_matrix(params.raw_variants, params.qc_variants)
+  raw_channel = Channel.fromPath(params.raw_variants)
+  qc_channel = Channel.fromPath(params.qc_variants)
+  create_matrix(raw_channel, qc_channel)
   create_matrix.out.view()
 }
