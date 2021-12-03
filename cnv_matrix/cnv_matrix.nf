@@ -34,7 +34,7 @@ process align_cnvs {
     path windows
     val sample_size
   output:
-    path '*_200bp.bed'
+    path '*_200bp.bed', emit 'cnv_calls/aligned'
   shell:
     template 'align_cnvs.bed'
 }
@@ -46,7 +46,7 @@ process assemble_matrix {
   input:
     path bed_files
   output:
-    'cnv_matrix.txt'
+    'cnv_matrix.txt', emit 'cnv_calls/matrix'
   shell:
     template: 'assemble_matrix.R'
 }
@@ -60,12 +60,14 @@ workflow create_matrix {
     filtered_cnvs = filter_cnvs.out.collect()
     num_samples = filtered_cnvs.size()
     make_windows(filtered_cnvs)
+    align_cnvs(qc_variants, make_windows.out, num_samples)
   emit:
-    make_windows.out
+    align_cnvs.out
 }
 
 params.raw_variants="/proj/sens2016007/nobackup/disentanglement/cnv_calling/cnv_calls/raw/*"
 params.qc_variants="/proj/sens2016007/nobackup/disentanglement/cnv_calling/cnv_calls/qc/*"
+
 workflow {
   create_matrix(params.raw_variants, params.qc_variants)
   create_matrix.out.view()
