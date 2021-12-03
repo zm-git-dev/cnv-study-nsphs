@@ -65,8 +65,8 @@ workflow create_matrix {
     align_cnvs.out
 }
 
-params.raw_variants="/proj/sens2016007/nobackup/disentanglement/cnv_calling/cnv_calls/raw/*"
-params.qc_variants="/proj/sens2016007/nobackup/disentanglement/cnv_calling/cnv_calls/qc/*"
+params.raw_variants="/proj/sens2016007/nobackup/disentanglement/cnv_calls/raw/*"
+params.qc_variants="/proj/sens2016007/nobackup/disentanglement/cnv_calls/qc/*"
 
 workflow {
   create_matrix(params.raw_variants, params.qc_variants)
