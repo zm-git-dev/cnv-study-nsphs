@@ -1,3 +1,5 @@
+nextflow.enable.dsl=2
+
 process filter_cnvs {
   cpus 1
   time '10m'
