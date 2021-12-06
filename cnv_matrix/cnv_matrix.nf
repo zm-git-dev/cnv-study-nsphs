@@ -37,20 +37,21 @@ process align_cnvs {
   output:
     path '*_200bp.bed'
   shell:
-    template 'align_cnvs.bed'
+    template 'align_cnvs.sh'
 }
 
 process assemble_matrix {
   cpus 4
   time '1h'
   publishDir "cnv_calls/matrix", mode: 'symlink'
+  beforeScript 'ml R_packages'
 
   input:
     path bed_files
   output:
     path 'cnv_matrix.txt'
   shell:
-    template: 'assemble_matrix.R'
+    template 'assemble_matrix.R'
 }
 
 process collapse_matrix {
