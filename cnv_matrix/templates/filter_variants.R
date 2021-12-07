@@ -9,7 +9,7 @@ results_file <- basename(variant_file) %>% str_replace(".txt", "_filtered.bed")
 
 variants <- fread(variant_file)
 if (nrow(variants) == 0){ # If the original is empty, the result is empty, too
-  write.table(data.table(), results_file)
+  write.table(data.table(), results_file, quote=F, row.names=F, sep="\t")
 } else {
   names(variants) <- c("type", "coordinates", "size", "rd_norm", "e1", "e2", "e3", "e4", "q0")
   passing_qc <- variants[q0 >= 0][q0 <= 0.5]
