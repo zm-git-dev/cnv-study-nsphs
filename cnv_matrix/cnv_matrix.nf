@@ -41,7 +41,7 @@ process align_cnvs {
 }
 
 process assemble_matrix {
-  cpus 4
+  cpus 14
   time '1h'
   publishDir "cnv_calls/matrix", mode: 'symlink'
   beforeScript 'ml R_packages'
@@ -77,7 +77,7 @@ workflow create_matrix {
     num_samples = filtered_cnvs.size()
     make_windows(filtered_cnvs)
     align_cnvs(qc_variants, make_windows.out, num_samples)
-    assemble_matrix(align_cnvs.out)
+    assemble_matrix(align_cnvs.out.collect())
     collapse_matrix(assemble_matrix.out)
   emit:
     collapse_matrix.out
