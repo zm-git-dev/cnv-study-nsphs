@@ -35,4 +35,5 @@ LR_function <- function(BioMarker, CNVbed, AgeSex, Chrom) {
 
 }
 
-LR_function(pea_3, CNVbed, AgeSex, "!{chromosome}")
+gwas_results <- LR_function(pea_3, CNVbed, AgeSex, "!{chromosome}")
+write.table(gwas_results, "!{chromosome}.glm", sep="\t", quote=F, row.names=F)
