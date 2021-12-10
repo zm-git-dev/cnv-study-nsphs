@@ -1,6 +1,6 @@
 nextflow.enable.dsl=2
 
-process gwas {
+process gwas_single_chromosome {
   cpus 4
   time '10h'
   beforeScript 'ml R_packages'
@@ -24,9 +24,9 @@ workflow gwas {
     covariates
     chromosomes
   main:
-    gwas(cnv_matrix, pheno, covariates, chromosomes)
+    gwas_single_chromosome(cnv_matrix, pheno, covariates, chromosomes)
   emit:
-    gwas.out
+    gwas_single_chromosome.out
 }
 
 params.cnv_matrix = "/proj/sens2016007/nobackup/disentanglement/cnv_calls/matrix/cnv_matrix_collapsed.txt"
