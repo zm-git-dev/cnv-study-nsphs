@@ -1,6 +1,12 @@
 #!Rscript
 library(foreach)
 library(data.table)
+library(doParallel)
+library(magrittr)
+
+Sys.getenv("SLURM_CPUS_PER_TASK", unset = 1) %>%
+  as.integer() %>%
+  registerDoParallel()
 
 load("!{phenotypes}")
 AgeSex <- read.csv(file="!{covariates}", header=TRUE, sep=",")
@@ -24,9 +30,9 @@ LR_function <- function(BioMarker, CNVbed, AgeSex, Chrom) {
   Sex <- AgeSex[ ,2] # Population Sex
   Age <- AgeSex[ ,3] # Population Age
   
-  foreach (i = 1:nrow(CNVbed), .combine=rbind) %do% {
+  foreach (i = 1:nrow(CNVbed), .combine=rbind) %dopar% {
     CNV <- t(CNVbed[i]) # index CNV
-    foreach (i1 = 1:ncol(BioMarker), .combine=rbind) %do% {
+    foreach (i1 = 1:ncol(BioMarker), .combine=rbind) %dopar% {
       Y <- BioMarker[ ,i1] #index biomarkder
       model1 <- glm( Y ~ CNV + Sex + Age, family = gaussian, na.action = na.omit)
       coefs <- summary(model1)$coef[2, 1:4]
