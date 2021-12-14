@@ -48,6 +48,7 @@ process assemble_matrix {
 
   input:
     path bed_files
+    path translation_key
   output:
     path 'cnv_matrix.txt'
   shell:
@@ -71,13 +72,14 @@ workflow create_matrix {
   take:
     raw_variants
     qc_variants
+    translation_key
   main:
     filter_cnvs(raw_variants)
     filtered_cnvs = filter_cnvs.out.collect()
     num_samples = filtered_cnvs.size()
     make_windows(filtered_cnvs)
     align_cnvs(qc_variants, make_windows.out, num_samples)
-    assemble_matrix(align_cnvs.out.collect())
+    assemble_matrix(align_cnvs.out.collect(), translation_key)
     collapse_matrix(assemble_matrix.out)
   emit:
     collapse_matrix.out
@@ -85,10 +87,12 @@ workflow create_matrix {
 
 params.raw_variants="/proj/sens2016007/nobackup/disentanglement/cnv_calls/raw/*"
 params.qc_variants="/proj/sens2016007/nobackup/disentanglement/cnv_calls/qc/*"
+params.translation_key="/proj/sens2016007/nobackup/NSPHS_phenotype_data/WGS_kodnyckel"
 
 workflow {
   raw_channel = Channel.fromPath(params.raw_variants)
   qc_channel = Channel.fromPath(params.qc_variants)
-  create_matrix(raw_channel, qc_channel)
+  translation_channel = Channel.of(params.translation_key)
+  create_matrix(raw_channel, qc_channel, translation_channel)
   create_matrix.out.view()
 }
