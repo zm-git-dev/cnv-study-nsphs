@@ -10,7 +10,7 @@ process gwas_single_chromosome {
     path cnv_matrix
     path phenotypes
     path covariates
-    each val chromosome
+    each chromosome
   output:
     path '*.glm'
   shell:
