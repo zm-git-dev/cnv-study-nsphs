@@ -5,6 +5,7 @@ params.bams="/proj/sens2016007/nobackup/bam-files/*.bam"
 params.phenotypes = "/proj/sens2016007/nobackup/NSPHS_phenotype_data/Phenotypes/PEA/pea3.rntransformed.RData"
 params.covariates="/proj/sens2016007/nobackup/NSPHS_phenotype_data/Phenotypes/Physical/KA06_KA09_age_sex.csv"
 params.chromosomes=1..22
+params.translation_key="/proj/sens2016007/nobackup/NSPHS_phenotype_data/WGS_kodnyckel"
 
 include {call_cnvs} from './cnv_calling/cnv_calling.nf'
 include {create_matrix} from './cnv_matrix/cnv_matrix.nf'
@@ -17,7 +18,8 @@ workflow {
   )
   create_matrix(
     call_cnvs.out.raw_variants,
-    call_cnvs.out.qc_variants
+    call_cnvs.out.qc_variants,
+    Channel.fromPath(params.translation_key)
   )
   gwas(
     create_matrix.out,

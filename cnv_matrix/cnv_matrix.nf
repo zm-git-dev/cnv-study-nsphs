@@ -92,7 +92,7 @@ params.translation_key="/proj/sens2016007/nobackup/NSPHS_phenotype_data/WGS_kodn
 workflow {
   raw_channel = Channel.fromPath(params.raw_variants)
   qc_channel = Channel.fromPath(params.qc_variants)
-  translation_channel = Channel.of(params.translation_key)
+  translation_channel = Channel.fromPath(params.translation_key)
   create_matrix(raw_channel, qc_channel, translation_channel)
   create_matrix.out.view()
 }
