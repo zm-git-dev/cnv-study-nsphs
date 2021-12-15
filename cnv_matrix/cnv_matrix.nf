@@ -41,8 +41,8 @@ process align_cnvs {
 }
 
 process assemble_matrix {
-  cpus 14
-  time '1h'
+  cpus 16
+  time '3h'
   publishDir "cnv_calls/matrix", mode: 'symlink'
   beforeScript 'ml R_packages'
 
