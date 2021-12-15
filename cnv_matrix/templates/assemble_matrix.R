@@ -32,7 +32,7 @@ names(filenames) <- sample_ids
 
 read_bed <- function(filename) {
   bed <- fread(filename)
-  if (nrow(bed) > 0) as.numeric(bed[,4]) else NULL
+  if (nrow(bed) > 0) as.numeric(bed[[4]]) else NULL
 }
 
 genotypes <- filenames %>%
