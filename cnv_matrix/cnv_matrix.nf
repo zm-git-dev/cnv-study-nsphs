@@ -28,7 +28,7 @@ process make_windows {
 process align_cnvs {
   cpus 2
   time '1h'
-  publishDir "cnv_calls/aligned", mode: 'symlink'
+  publishDir "cnv_calls/aligned", mode: 'copy'
 
   input:
     path variants
@@ -43,7 +43,7 @@ process align_cnvs {
 process assemble_matrix {
   cpus 16
   time '3h'
-  publishDir "cnv_calls/matrix", mode: 'symlink'
+  publishDir "cnv_calls/matrix", mode: 'copy'
   beforeScript 'ml R_packages'
 
   input:
@@ -58,7 +58,7 @@ process assemble_matrix {
 process collapse_matrix {
   cpus 4
   time '1h'
-  publishDir "cnv_calls/matrix", mode: 'symlink'
+  publishDir "cnv_calls/matrix", mode: 'copy'
 
   input:
     path cnv_matrix

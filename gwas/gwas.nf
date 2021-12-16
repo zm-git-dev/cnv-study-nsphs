@@ -4,7 +4,7 @@ process gwas_single_chromosome {
   cpus 4
   time '10h'
   beforeScript 'ml R_packages'
-  publishDir "cnv_calls/gwas", mode: 'symlink'
+  publishDir "cnv_calls/gwas", mode: 'copy'
 
   input:
     path cnv_matrix
