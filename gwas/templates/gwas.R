@@ -37,7 +37,17 @@ LR_function <- function(BioMarker, CNVbed, AgeSex, Chrom) {
       model1 <- glm( Y ~ CNV + Sex + Age, family = gaussian, na.action = na.omit)
       coefs <- summary(model1)$coef[2, 1:4]
 
-      cnv_coordinates[i, .(chr, start, end, beta = coefs[1], se = coefs[2], t = coefs[3], p=coefs[4])]
+      cnv_coordinates[i, .(
+        chr,
+        start,
+        end,
+        marker = colnames(BioMarker)[i1],
+        N = nobs(model1),
+        beta = coefs[1],
+        se = coefs[2],
+        t = coefs[3],
+        p = coefs[4]
+      )]
     }
   }
 
